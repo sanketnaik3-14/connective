@@ -171,6 +171,7 @@ class BlueprintHubScreen extends ConsumerWidget {
                           MaterialPageRoute(
                             builder: (context) => QuestionnaireScreen(
                               moduleTitle: module.title,
+                              moduleId: module.id,
                               questions: moduleData[module.id]!,
                             ),
                           ),

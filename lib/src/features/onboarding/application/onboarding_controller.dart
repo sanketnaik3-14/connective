@@ -1,5 +1,3 @@
-// lib/src/features/onboarding/application/onboarding_controller.dart
-
 import 'dart:async';
 import 'package:connective/src/features/auth/data/auth_providers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'onboarding_controller.g.dart';
 
+// The missing state class
 class OnboardingState {
   final String? displayName;
   final String? username;
@@ -72,6 +71,7 @@ class OnboardingController extends _$OnboardingController {
     return OnboardingState();
   }
 
+  // All the missing update methods
   void updateDisplayName(String name) {
     state = state.copyWith(displayName: name);
   }
@@ -130,9 +130,7 @@ class OnboardingController extends _$OnboardingController {
   Future<void> submitOnboardingData() async {
     final user = ref.read(authRepositoryProvider).currentUser;
     if (user == null) throw Exception('User not logged in');
-
     final photoUrls = await _uploadPhotos(user.uid, state.photos);
-
     final dataToSave = {
       'displayName': state.displayName,
       'username': state.username,
@@ -147,32 +145,27 @@ class OnboardingController extends _$OnboardingController {
       'personalitySnapshot': state.personalitySnapshot,
       'onboardingComplete': true,
     };
-    try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .update(dataToSave);
-    } catch (e) {
-      print("Failed to save onboarding data: $e");
-      // In a real app, you would show a user-facing error message here
-      rethrow;
-    }
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .update(dataToSave);
   }
-}
 
-Future<List<String>> _uploadPhotos(String userId, List<XFile> photos) async {
-  final List<String> downloadUrls = [];
-  final storageRef = FirebaseStorage.instance.ref();
-  for (int i = 0; i < photos.length; i++) {
-    final photoFile = photos[i];
-    final photoRef = storageRef.child('user_photos/$userId/photo_$i.jpg');
-    try {
-      final uploadTask = await photoRef.putData(await photoFile.readAsBytes());
-      final downloadUrl = await uploadTask.ref.getDownloadURL();
-      downloadUrls.add(downloadUrl);
-    } catch (e) {
-      print("Failed to upload photo: $e");
+  Future<List<String>> _uploadPhotos(String userId, List<XFile> photos) async {
+    final List<String> downloadUrls = [];
+    final storageRef = FirebaseStorage.instance.ref();
+    for (int i = 0; i < photos.length; i++) {
+      final photoFile = photos[i];
+      final photoRef = storageRef.child('user_photos/$userId/photo_$i.jpg');
+      try {
+        final uploadTask =
+            await photoRef.putData(await photoFile.readAsBytes());
+        final downloadUrl = await uploadTask.ref.getDownloadURL();
+        downloadUrls.add(downloadUrl);
+      } catch (e) {
+        print("Failed to upload photo: $e");
+      }
     }
+    return downloadUrls;
   }
-  return downloadUrls;
 }

@@ -1,16 +1,16 @@
 // lib/src/features/blueprint/presentation/questionnaire_screen.dart
 
-import 'package:connective/src/features/blueprint/data/questionnaire_models.dart';
+import 'package:connective/src/features/auth/data/auth_providers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:typed_data'; // Ensure this import is present for sliders/images if needed elsewhere
+import 'package:connective/src/features/blueprint/data/questionnaire_models.dart';
 
 // Provider to manage the state of the current questionnaire's answers
 final questionnaireStateProvider =
     StateProvider<Map<String, dynamic>>((ref) => {});
 
-// Main screen is a ConsumerStatefulWidget to track the current page for the back button
-class QuestionnaireScreen extends ConsumerWidget {
+class QuestionnaireScreen extends ConsumerStatefulWidget {
   final String moduleTitle;
   final String moduleId;
   final List<QuestionnaireQuestion> questions;
@@ -49,39 +49,31 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
     super.dispose();
   }
 
-  Future<void> _submitAnswers(BuildContext context, WidgetRef ref) async {
+  Future<void> _submitAnswers() async {
     final answers = ref.read(questionnaireStateProvider);
     final userId = ref.read(authRepositoryProvider).currentUser?.uid;
 
     if (userId == null) {
-      // Show an error if user is not found
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Error: User not logged in.")),
-      );
+          const SnackBar(content: Text("Error: User not logged in.")));
       return;
     }
 
     try {
       final userDocRef =
           FirebaseFirestore.instance.collection('users').doc(userId);
-
-      // We use dot notation to update a specific field within a map
       await userDocRef.update({
-        'blueprintAnswers.$moduleId': answers,
-        'blueprintCompletion.$moduleId': true,
+        'blueprintAnswers.${widget.moduleId}': answers,
+        'blueprintCompletion.${widget.moduleId}': true,
       });
 
-      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("$moduleTitle completed!")),
-      );
-
+          SnackBar(content: Text("${widget.moduleTitle} completed!")));
       Navigator.of(context).pop();
     } catch (e) {
       print("Failed to save answers: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error saving progress: $e")),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error saving progress: $e")));
     }
   }
 
@@ -228,12 +220,23 @@ class _SingleSelectButtonWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final selectedValue =
+        ref.watch(questionnaireStateProvider)[question.setting];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: question.options.map((option) {
+        final isSelected = selectedValue == option.value;
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isSelected
+                  ? Theme.of(context).primaryColor
+                  : Theme.of(context).colorScheme.surface,
+              foregroundColor: isSelected
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.onSurface,
+            ),
             onPressed: () {
               ref.read(questionnaireStateProvider.notifier).update(
                   (state) => {...state, question.setting!: option.value});

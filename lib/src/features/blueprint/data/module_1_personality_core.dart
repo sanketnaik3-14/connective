@@ -7,6 +7,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "You're planning a week-long vacation. Which itinerary sounds most appealing?",
+    setting: "vacationStyle",
     options: [
       AnswerOption(
           text:
@@ -29,6 +30,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "At work, your team hits a major, unexpected roadblock. Your first instinct is to:",
+    setting: "workProblemSolving",
     options: [
       AnswerOption(
           text:
@@ -51,6 +53,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "A friend invites you to an experimental theatre performance with an abstract plot. You feel:",
+    setting: "theatrePreference",
     options: [
       AnswerOption(
           text:
@@ -75,6 +78,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "It's Friday afternoon. Looking ahead to your weekend, you are most likely to:",
+    setting: "weekendPlans",
     options: [
       AnswerOption(
           text:
@@ -97,6 +101,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "A volunteer committee member consistently fails to complete tasks on time. You are most likely to:",
+    setting: "committeeMemberIssue",
     options: [
       AnswerOption(
           text:
@@ -119,6 +124,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "When it comes to saving for a long-term goal, your approach is:",
+    setting: "savingsApproach",
     options: [
       AnswerOption(
           text:
@@ -143,6 +149,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "After a long day at work, you need to recharge. You're most likely to:",
+    setting: "rechargeAfterWork",
     options: [
       AnswerOption(
           text: "Call a friend to meet for a drink and vent about the day.",
@@ -163,6 +170,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "You're at a large party where you only know a few people. You spend most of the evening:",
+    setting: "Vacation Style",
     options: [
       AnswerOption(
           text:
@@ -185,6 +193,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "A leadership opportunity comes up in a group you're part of. Your reaction is:",
+    setting: "leadershipOpportunity",
     options: [
       AnswerOption(
           text:
@@ -209,6 +218,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "A friend is very upset about a minor work issue you feel they are blowing out of proportion. You:",
+    setting: "friendUpset",
     options: [
       AnswerOption(
           text:
@@ -231,6 +241,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "You and your partner have a fundamental disagreement. The discussion becomes tense. You are most likely to:",
+    setting: "partnerDisagreement",
     options: [
       AnswerOption(
           text:
@@ -252,6 +263,7 @@ final module1Questions = [
   ),
   QuestionnaireQuestion(
     questionText: "When meeting new people, your default mindset is to be:",
+    setting: "meetingNewPeople",
     options: [
       AnswerOption(
           text: "Open and trusting, assuming they have good intentions.",
@@ -273,6 +285,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "You receive disappointing news, like being passed over for a promotion. Your immediate internal reaction is:",
+    setting: "disappointingNewsReaction",
     options: [
       AnswerOption(
           text:
@@ -295,6 +308,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "You are waiting for important news with an uncertain outcome. In the days leading up to it, you:",
+    setting: "waitingForNews",
     options: [
       AnswerOption(
           text:
@@ -315,6 +329,7 @@ final module1Questions = [
     ],
   ),
   QuestionnaireQuestion(
+    setting: "socialEmbarrassment",
     questionText:
         "You make a small, embarrassing mistake in a social setting. Afterwards, you:",
     options: [
@@ -339,6 +354,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "Your partner seems quiet and distant one evening. Your first assumption is:",
+    setting: "partnerQuietEvening",
     options: [
       AnswerOption(
           text:
@@ -363,6 +379,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "If you had to choose one, which of these would you define as the cornerstone of a successful life?",
+    setting: "cornerstoneOfSuccess",
     options: [
       AnswerOption(
           text:
@@ -385,6 +402,7 @@ final module1Questions = [
   QuestionnaireQuestion(
     questionText:
         "In a long-term partnership, the most essential ingredient for you is:",
+    setting: "essentialPartnershipIngredient",
     options: [
       AnswerOption(
           text:
