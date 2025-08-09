@@ -7,16 +7,18 @@ import 'dart:typed_data'; // Ensure this import is present for sliders/images if
 
 // Provider to manage the state of the current questionnaire's answers
 final questionnaireStateProvider =
-    StateProvider.autoDispose<Map<String, dynamic>>((ref) => {});
+    StateProvider<Map<String, dynamic>>((ref) => {});
 
 // Main screen is a ConsumerStatefulWidget to track the current page for the back button
-class QuestionnaireScreen extends ConsumerStatefulWidget {
+class QuestionnaireScreen extends ConsumerWidget {
   final String moduleTitle;
+  final String moduleId;
   final List<QuestionnaireQuestion> questions;
 
   const QuestionnaireScreen({
     super.key,
     required this.moduleTitle,
+    required this.moduleId,
     required this.questions,
   });
 
@@ -47,10 +49,40 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
     super.dispose();
   }
 
-  void _submitAnswers() {
+  Future<void> _submitAnswers(BuildContext context, WidgetRef ref) async {
     final answers = ref.read(questionnaireStateProvider);
-    print("User Answers for ${widget.moduleTitle}: $answers");
-    Navigator.of(context).pop();
+    final userId = ref.read(authRepositoryProvider).currentUser?.uid;
+
+    if (userId == null) {
+      // Show an error if user is not found
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error: User not logged in.")),
+      );
+      return;
+    }
+
+    try {
+      final userDocRef =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+
+      // We use dot notation to update a specific field within a map
+      await userDocRef.update({
+        'blueprintAnswers.$moduleId': answers,
+        'blueprintCompletion.$moduleId': true,
+      });
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("$moduleTitle completed!")),
+      );
+
+      Navigator.of(context).pop();
+    } catch (e) {
+      print("Failed to save answers: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error saving progress: $e")),
+      );
+    }
   }
 
   @override

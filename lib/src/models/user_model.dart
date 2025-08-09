@@ -1,44 +1,27 @@
+// lib/src/models/user_model.dart
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserModel {
   final String uid;
   final String email;
   final String? displayName;
-  final String? username;
-  final DateTime? dateOfBirth;
-  final String? location;
-  // Onboarding Step 2
-  final String? identity;
-  final String? sexualOrientation;
-  final String? primaryGoal;
-  final List<String>? interests;
-  // Onboarding Step 3
-  final List<String> photoUrls;
-  final Map<String, bool> privatePhotos;
-  final String? myStory;
-  // Onboarding Status
+  // ... (all other fields are the same)
   final bool onboardingComplete;
-  // Blueprint results will be stored here
-  final Map<String, dynamic> blueprintResults;
   final Map<String, bool> blueprintCompletion;
+
+  // ADD THIS NEW FIELD
+  final Map<String, dynamic> blueprintAnswers;
 
   UserModel({
     required this.uid,
     required this.email,
     this.displayName,
-    this.username,
-    this.dateOfBirth,
-    this.location,
-    this.identity,
-    this.sexualOrientation,
-    this.primaryGoal,
-    this.interests,
-    this.photoUrls = const [],
-    this.privatePhotos = const {},
-    this.myStory,
+    // ... (rest of constructor is the same)
     this.onboardingComplete = false,
-    this.blueprintResults = const {},
-    this.blueprintCompletion = const {}, // Initialize as empty map
+    this.blueprintCompletion = const {},
+    this.blueprintAnswers = const {}, // ADD THIS
   });
 
   factory UserModel.fromDocument(DocumentSnapshot doc) {
@@ -46,45 +29,20 @@ class UserModel {
     return UserModel(
       uid: doc.id,
       email: data['email'] ?? '',
-      displayName: data['displayName'],
-      username: data['username'],
-      dateOfBirth: (data['dateOfBirth'] as Timestamp?)?.toDate(),
-      location: data['location'],
-      identity: data['identity'],
-      sexualOrientation: data['sexualOrientation'],
-      primaryGoal: data['primaryGoal'],
-      interests: List<String>.from(data['interests'] ?? []),
-      photoUrls: List<String>.from(data['photoUrls'] ?? []),
-      privatePhotos: Map<String, bool>.from(data['privatePhotos'] ?? {}),
-      myStory: data['myStory'],
-      onboardingComplete: data['onboardingComplete'] ?? false,
-      blueprintResults: Map<String, dynamic>.from(
-        data['blueprintResults'] ?? {},
-      ),
+      // ... (rest of factory is the same)
       blueprintCompletion:
           Map<String, bool>.from(data['blueprintCompletion'] ?? {}),
+      // ADD THIS
+      blueprintAnswers:
+          Map<String, dynamic>.from(data['blueprintAnswers'] ?? {}),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'uid': uid,
-      'email': email,
-      'displayName': displayName,
-      'username': username,
-      'dateOfBirth':
-          dateOfBirth != null ? Timestamp.fromDate(dateOfBirth!) : null,
-      'location': location,
-      'identity': identity,
-      'sexualOrientation': sexualOrientation,
-      'primaryGoal': primaryGoal,
-      'interests': interests,
-      'photoUrls': photoUrls,
-      'privatePhotos': privatePhotos,
-      'myStory': myStory,
-      'onboardingComplete': onboardingComplete,
-      'blueprintResults': blueprintResults,
+      // ... (all other fields)
       'blueprintCompletion': blueprintCompletion,
+      'blueprintAnswers': blueprintAnswers, // ADD THIS
     };
   }
 }
