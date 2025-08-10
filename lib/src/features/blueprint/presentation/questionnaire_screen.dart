@@ -1,12 +1,11 @@
-// lib/src/features/blueprint/presentation/questionnaire_screen.dart
-
 import 'package:connective/src/features/auth/data/auth_providers.dart';
+import 'package:connective/src/features/blueprint/data/questionnaire_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connective/src/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:connective/src/features/blueprint/data/questionnaire_models.dart';
+import 'dart:typed_data';
 
-// Provider to manage the state of the current questionnaire's answers
 final questionnaireStateProvider =
     StateProvider<Map<String, dynamic>>((ref) => {});
 
@@ -35,13 +34,25 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
   void initState() {
     super.initState();
     _pageController.addListener(() {
-      if (_pageController.page?.round() != _currentPage) {
+      if (mounted && _pageController.page?.round() != _currentPage) {
         setState(() {
           _currentPage = _pageController.page!.round();
         });
       }
     });
-  }
+
+    // Load initial data after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final user = ref.read(userStreamProvider).valueOrNull;
+      if (user != null) {
+        final existingAnswers =
+            user.blueprintAnswers[widget.moduleId] as Map<String, dynamic>? ??
+                {};
+        ref.read(questionnaireStateProvider.notifier).state = existingAnswers;
+      }
+    });
+  } // <-- THIS BRACE WAS MISSING
 
   @override
   void dispose() {
@@ -54,8 +65,10 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
     final userId = ref.read(authRepositoryProvider).currentUser?.uid;
 
     if (userId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Error: User not logged in.")));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Error: User not logged in.")));
+      }
       return;
     }
 
@@ -67,13 +80,18 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
         'blueprintCompletion.${widget.moduleId}': true,
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("${widget.moduleTitle} completed!")));
-      Navigator.of(context).pop();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("${widget.moduleTitle} completed!")));
+        ref.read(questionnaireStateProvider.notifier).state = {};
+        Navigator.of(context).pop();
+      }
     } catch (e) {
       print("Failed to save answers: $e");
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Error saving progress: $e")));
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Error saving progress: $e")));
+      }
     }
   }
 
@@ -89,7 +107,6 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
         itemCount: widget.questions.length,
         itemBuilder: (context, index) {
           final question = widget.questions[index];
-          // Pass the controller and other info to a stateless helper
           return _QuestionPage(
             question: question,
             pageController: _pageController,
@@ -225,7 +242,7 @@ class _SingleSelectButtonWidget extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: question.options.map((option) {
-        final isSelected = selectedValue == option.value;
+        final isSelected = selectedValue == option.text;
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: ElevatedButton(
@@ -238,8 +255,11 @@ class _SingleSelectButtonWidget extends ConsumerWidget {
                   : Theme.of(context).colorScheme.onSurface,
             ),
             onPressed: () {
-              ref.read(questionnaireStateProvider.notifier).update(
-                  (state) => {...state, question.setting!: option.value});
+              ref.read(questionnaireStateProvider.notifier).update((state) => {
+                    ...state,
+                    question.setting!: option.text,
+                    '${question.setting}_value': option.value
+                  });
               onAnswered();
             },
             child: Text(option.text),
@@ -270,7 +290,6 @@ class _MultiSelectChipWidget extends ConsumerWidget {
           selected: isSelected,
           onSelected: (bool selected) {
             final currentSelection = List<String>.from(selectedValues);
-            // This logic handles the "choose up to two" rule for Module 6
             if (question.setting == 'Playfulness Style') {
               if (selected) {
                 if (currentSelection.length < 2) {
@@ -285,7 +304,6 @@ class _MultiSelectChipWidget extends ConsumerWidget {
                 currentSelection.remove(option.value);
               }
             } else {
-              // For all other multi-selects (like in Module 5)
               if (selected) {
                 currentSelection.add(option.value);
               } else {
@@ -350,7 +368,15 @@ class _SliderWidgetState extends ConsumerState<_SliderWidget> {
   @override
   void initState() {
     super.initState();
-    if (widget.question.setting == 'Age Range') {
+    // Initialize slider state from the main provider if it exists
+    final existingValues =
+        ref.read(questionnaireStateProvider)[widget.question.setting];
+    if (existingValues is Map) {
+      _currentRangeValues = RangeValues(
+        (existingValues['start'] as num).toDouble(),
+        (existingValues['end'] as num).toDouble(),
+      );
+    } else if (widget.question.setting == 'Age Range') {
       _currentRangeValues = const RangeValues(25, 45);
     } else if (widget.question.setting == 'Height Range') {
       _currentRangeValues = const RangeValues(160, 185);

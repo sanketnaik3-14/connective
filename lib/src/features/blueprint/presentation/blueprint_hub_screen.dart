@@ -152,9 +152,6 @@ class BlueprintHubScreen extends ConsumerWidget {
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(16),
                     onTap: () {
-                      // 1. Reset the questionnaire state to an empty map before starting.
-                      ref.read(questionnaireStateProvider.notifier).state = {};
-                      // A Map to hold all our question lists for easy access
                       final moduleData = {
                         'module1': module1Questions,
                         'module6': module6Questions,
