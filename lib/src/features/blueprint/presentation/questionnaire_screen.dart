@@ -1,10 +1,8 @@
 import 'package:connective/src/features/auth/data/auth_providers.dart';
 import 'package:connective/src/features/blueprint/data/questionnaire_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connective/src/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:typed_data';
 
 final questionnaireStateProvider =
     StateProvider<Map<String, dynamic>>((ref) => {});
@@ -237,12 +235,12 @@ class _SingleSelectButtonWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedValue =
-        ref.watch(questionnaireStateProvider)[question.setting];
+    final selectedAnswerText = ref.watch(
+        questionnaireStateProvider.select((state) => state[question.setting] as String?));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: question.options.map((option) {
-        final isSelected = selectedValue == option.text;
+        final isSelected = selectedAnswerText == option.text;
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: ElevatedButton(
@@ -276,10 +274,9 @@ class _MultiSelectChipWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedValues =
-        ref.watch(questionnaireStateProvider)[question.setting]
-                as List<String>? ??
-            [];
+    final selectedValues = ref.watch(questionnaireStateProvider.select(
+      (state) => (state[question.setting] as List<String>?) ?? [],
+    ));
     return Wrap(
       spacing: 8.0,
       alignment: WrapAlignment.center,
@@ -325,8 +322,8 @@ class _DropdownWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedValue =
-        ref.watch(questionnaireStateProvider)[question.setting] as String?;
+    final selectedValue = ref.watch(questionnaireStateProvider
+        .select((state) => state[question.setting] as String?));
     return DropdownButtonFormField<String>(
       value: selectedValue,
       decoration: InputDecoration(

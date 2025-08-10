@@ -37,10 +37,12 @@ GoRouter goRouter(GoRouterRef ref) {
 
       // --- Redirection Logic ---
       if (!isLoggedIn) return isLoggingIn ? null : '/auth';
-      if (isLoggedIn && !onboardingComplete)
+      if (isLoggedIn && !onboardingComplete) {
         return isOnboarding ? null : '/onboarding';
-      if (isLoggedIn && onboardingComplete && (isLoggingIn || isOnboarding))
+      }
+      if (isLoggedIn && onboardingComplete && (isLoggingIn || isOnboarding)) {
         return '/dashboard';
+      }
 
       return null;
     },
