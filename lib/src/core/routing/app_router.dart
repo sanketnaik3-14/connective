@@ -5,7 +5,6 @@ import 'package:connective/src/features/auth/presentation/auth_screen.dart';
 import 'package:connective/src/features/blueprint/presentation/blueprint_hub_screen.dart';
 import 'package:connective/src/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

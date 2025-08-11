@@ -41,14 +41,13 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBvtGoMDbI79tBKth42BouiXvuCFJbSmRA',
-    appId: '1:667936759100:web:d440f8d391d6c050de9239',
-    messagingSenderId: '667936759100',
-    projectId: 'connective-5d44e',
-    authDomain: 'connective-5d44e.firebaseapp.com',
-    storageBucket: 'connective-5d44e.firebasestorage.app',
-    measurementId: 'G-B7V52RLT5M',
-  );
+      apiKey: "AIzaSyBvtGoMDbI79tBKth42BouiXvuCFJbSmRA",
+      authDomain: "connective-5d44e.firebaseapp.com",
+      projectId: "connective-5d44e",
+      storageBucket: "connective-5d44e.firebasestorage.app",
+      messagingSenderId: "667936759100",
+      appId: "1:667936759100:web:d440f8d391d6c050de9239",
+      measurementId: "G-B7V52RLT5M");
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCp2RxEHvS7kB_cRNIx4t1oC4VFQPDqWvo',
@@ -64,6 +63,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '667936759100',
     projectId: 'connective-5d44e',
     storageBucket: 'connective-5d44e.firebasestorage.app',
+    androidClientId:
+        '667936759100-obng9q7lklh9n5iaolhkk2le0beodfg4.apps.googleusercontent.com',
+    iosClientId:
+        '667936759100-v7l423fj1idebau8iir4ktlifb0o1ldj.apps.googleusercontent.com',
     iosBundleId: 'com.example.connective',
   );
 
@@ -73,6 +76,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '667936759100',
     projectId: 'connective-5d44e',
     storageBucket: 'connective-5d44e.firebasestorage.app',
+    androidClientId:
+        '667936759100-obng9q7lklh9n5iaolhkk2le0beodfg4.apps.googleusercontent.com',
+    iosClientId:
+        '667936759100-v7l423fj1idebau8iir4ktlifb0o1ldj.apps.googleusercontent.com',
     iosBundleId: 'com.example.connective',
   );
 

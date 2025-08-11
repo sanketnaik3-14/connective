@@ -12,22 +12,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-          // PASTE YOUR WEB CONFIG VALUES HERE if you haven't already
-          apiKey: "...",
-          authDomain: "...",
-          projectId: "...",
-          storageBucket: "...",
-          messagingSenderId: "...",
-          appId: "..."),
-    );
-  } else {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  }
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // FIX: The entire application should be wrapped in a ProviderScope.
   // This is what allows the DevTools to discover your providers.
